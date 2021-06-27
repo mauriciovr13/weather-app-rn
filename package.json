@@ -18,6 +18,7 @@
     "@babel/runtime": "^7.14.6",
     "@react-native-community/eslint-config": "^3.0.0",
     "babel-jest": "^27.0.5",
+    "cz-conventional-changelog": "3.3.0",
     "eslint": "^7.29.0",
     "jest": "^27.0.5",
     "metro-react-native-babel-preset": "^0.66.0",
@@ -25,5 +26,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

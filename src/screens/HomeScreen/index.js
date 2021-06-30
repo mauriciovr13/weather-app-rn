@@ -13,7 +13,7 @@ import styled from 'styled-components/native';
 import { WeatherCard, Header, CitySearch } from '../../components';
 
 import api from '../../services/api';
-import { API_KEY } from '../../config/constants';
+import { API_KEY } from '@env';
 
 export const HomeScreen = () => {
   const [weatherData, setWeatherData] = useState([]);

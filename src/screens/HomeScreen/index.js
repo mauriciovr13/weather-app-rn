@@ -23,17 +23,17 @@ export const HomeScreen = () => {
 
   const listRef = useRef();
 
-  const showAlertByType = type =>
+  const showAlertByType = (type, err) =>
     type === 'permission'
       ? Alert.alert(
         'Error',
         'There was an error with the location permission. Restart the app to request again',
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+        [{ text: 'OK', onPress: () => console.log(err) }],
       )
       : Alert.alert(
         'Something went wrong',
         "Something wrong is not right, check your internet connection and try the request again. If that doesn't work, restart the app.",
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+        [{ text: 'OK', onPress: () => console.log(err) }],
       );
 
   const getWeatherInfoByCity = () => {
@@ -47,7 +47,7 @@ export const HomeScreen = () => {
         ]);
         setCitySearched('');
       })
-      .catch(() => showAlertByType('request'))
+      .catch(err => showAlertByType('request', err))
       .finally(() => setLoading(false));
   };
 
@@ -65,9 +65,9 @@ export const HomeScreen = () => {
               { ...data, uuid: weatherData.length, expanded: false },
             ]);
           })
-          .catch(() => showAlertByType('request'))
+          .catch(err => showAlertByType('request', err))
           .finally(() => setLoading(false)),
-      () => showAlertByType('request'),
+      err => showAlertByType('request', err),
     );
   };
 
@@ -101,7 +101,7 @@ export const HomeScreen = () => {
         showAlertByType('permission');
       }
     } catch (err) {
-      showAlertByType('permission');
+      showAlertByType('permission', err);
     }
   };
 
@@ -113,7 +113,6 @@ export const HomeScreen = () => {
     }
   };
 
-  console.log(weatherData);
 
   const sectionData = useMemo(
     () => [
@@ -183,7 +182,7 @@ export const HomeScreen = () => {
 
 const Container = styled.View`
   flex: 1;
-  background-color: #ebedee;
+  background-color: ${({ theme: { colors } }) => colors.background}
 `;
 
 const SectionTitle = styled.Text`

@@ -1,25 +1,23 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import styled from 'styled-components/native';
 
-export default function Header({ onRightPress, onLeftPress }) {
-  return (
-    <View>
-      <SafeAreaView />
-      <Container>
-        <Button onPress={onLeftPress}>
-          <Text textAlign="left" color="red">
-            Clear
-          </Text>
-        </Button>
-        <Text textAlign="center">WEATHER</Text>
-        <Button onPress={onRightPress}>
-          <Text textAlign="right">Search By City</Text>
-        </Button>
-      </Container>
-    </View>
-  );
-}
+const Header = ({ onRightPress, onLeftPress }) => (
+  <View>
+    <SafeAreaView />
+    <Container>
+      <Button onPress={onLeftPress}>
+        <Text textAlign="left" color="red">
+          Clear
+        </Text>
+      </Button>
+      <Text textAlign="center">WEATHER</Text>
+      <Button onPress={onRightPress}>
+        <Text textAlign="right">Search By City</Text>
+      </Button>
+    </Container>
+  </View>
+);
 
 const Container = styled.View`
   flex-direction: row;
@@ -39,3 +37,5 @@ const Text = styled.Text`
   font-size: 16px;
   color: ${({ color }) => color || 'black'};
 `;
+
+export default memo(Header);

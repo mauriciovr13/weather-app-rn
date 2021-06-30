@@ -1,15 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { fromUnixTime, format } from 'date-fns';
+import styled from 'styled-components/native';
 
-import theme from '../config/colors';
 import { weatherConditions } from '../utils/conditions';
-
 import { WeatherDetails } from '.';
 
-export default function WeatherCard({ data, onPressItem }) {
+const WeatherCard = ({ data, onPressItem }) => {
   const weather = useMemo(() => {
     const weatherId = data.weather[0].id;
     return weatherConditions(weatherId);
@@ -71,9 +69,9 @@ export default function WeatherCard({ data, onPressItem }) {
   );
 }
 
-const Container = styled(LinearGradient).attrs(({ weather }) => {
+const Container = styled(LinearGradient).attrs(({ weather, theme: { colors } }) => {
   return {
-    colors: [theme[weather].secondary, theme[weather].primary],
+    colors: [colors[weather].secondary, colors[weather].primary],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   };
@@ -92,13 +90,13 @@ const Header = styled.View`
 
 const City = styled.Text`
   font-size: 16px;
-  color: ${({ weather }) => theme[weather].secondaryText};
+  color: ${({ weather, theme: { colors } }) => colors[weather].secondaryText};
   text-align: center;
   margin-top: 5px;
 `;
 const Description = styled.Text`
   font-size: 20px;
-  color: ${({ weather }) => theme[weather].secondaryText};
+  color: ${({ weather, theme: { colors } }) => colors[weather].secondaryText};
   text-align: center;
   margin-bottom: 5px;
   text-transform: capitalize;
@@ -110,7 +108,7 @@ const Unit = styled.Text`
 
 const Temperature = styled.Text`
   font-size: 32px;
-  color: ${({ weather }) => theme[weather].primaryText};
+  color: ${({ weather, theme: { colors } }) => colors[weather].primaryText};
   text-align: center;
 `;
 
@@ -128,3 +126,5 @@ const TextContainer = styled.View`
 const Icon = styled.Image`
   flex: 1;
 `;
+
+export default memo(WeatherCard);

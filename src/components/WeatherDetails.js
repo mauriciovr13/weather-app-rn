@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components/native';
 
-import colors from '../config/colors';
-
-export default function Info({ info, weather }) {
+const WeatherDetails = ({ info, weather }) => {
   const getLine = data => (
     <Container weather={weather} key={`${data[0]?.label}`}>
       <Content>
@@ -38,7 +36,7 @@ export default function Info({ info, weather }) {
 
 const Container = styled.View`
   border-top-width: 1px;
-  border-color: ${({ weather }) => colors[weather].tertiaryText};
+  border-color: ${({ weather, theme: { colors } }) => colors[weather].tertiaryText};
   margin-bottom: 5px;
   padding-top: 2px;
 `;
@@ -58,11 +56,13 @@ const Column = styled.View`
 `;
 
 const Title = styled.Text`
-  color: ${({ weather }) => colors[weather].primaryText};
+  color: ${({ weather, theme: { colors } }) => colors[weather].primaryText};
   font-size: 12px;
 `;
 
 const Value = styled.Text`
-  color: ${({ weather }) => colors[weather].tertiaryText};
+  color: ${({ weather, theme: { colors } }) => colors[weather].tertiaryText};
   font-size: 14px;
 `;
+
+export default memo(WeatherDetails);

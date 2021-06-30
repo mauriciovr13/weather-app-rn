@@ -1,36 +1,34 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Modal, Text } from 'react-native';
 import styled from 'styled-components/native';
 
-const CitySearch = ({ visible, value, onChange, onSearch, onCancel }) => {
-  return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={true}
-      hardwareAccelerated
-      statusBarTranslucent>
-      <Container>
-        <Content>
-          <Title>
-            Enter the city name to see the weather forecast. {'\n\n'}
-            To update the weather forecast of the current location, just swipe
-            down from the main screen.
-          </Title>
-          <TextInput value={value} onChangeText={onChange} />
-          <ButtonsContainer>
-            <Button onPress={onCancel}>
-              <Text>cancel</Text>
-            </Button>
-            <Button onPress={onSearch}>
-              <Text>search</Text>
-            </Button>
-          </ButtonsContainer>
-        </Content>
-      </Container>
-    </Modal>
-  );
-};
+const CitySearch = ({ visible, value, onChange, onSearch, onCancel }) => (
+  <Modal
+    visible={visible}
+    animationType="fade"
+    transparent={true}
+    hardwareAccelerated
+    statusBarTranslucent>
+    <Container>
+      <Content>
+        <Title>
+          Enter the city name to see the weather forecast. {'\n\n'}
+          To update the weather forecast of the current location, just swipe
+          down from the main screen.
+        </Title>
+        <TextInput value={value} onChangeText={onChange} />
+        <ButtonsContainer>
+          <Button onPress={onCancel}>
+            <Text>cancel</Text>
+          </Button>
+          <Button onPress={onSearch}>
+            <Text>search</Text>
+          </Button>
+        </ButtonsContainer>
+      </Content>
+    </Container>
+  </Modal>
+);
 
 const Container = styled.View`
   flex: 1;
@@ -79,4 +77,4 @@ const Button = styled.TouchableOpacity`
   align-items: center;
 `;
 
-export default CitySearch;
+export default memo(CitySearch);

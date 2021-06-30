@@ -7,9 +7,7 @@ export const WEATHER_CONDITIONS = {
   DRIZZLE: 'drizzle',
   RAIN: 'rain',
   SNOW: 'snow',
-  ATMOSPHERE: 'atmosphere',
+  ATMOSPHERE: 'drizzle',
   CLEAR: 'clear',
   CLOUDS: 'clouds',
 };
-
-export const STORAGE_KEY = '@weatherApp';

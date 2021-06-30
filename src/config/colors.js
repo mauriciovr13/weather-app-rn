@@ -1,4 +1,6 @@
 const colors = {
+  background: ' #ebedee',
+
   thunderstorm: {
     primary: '#222f61',
     secondary: '#38436c',

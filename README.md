@@ -7,7 +7,10 @@
 
 WeatherApp is an app made using the [React Native](https://reactnative.dev/) which has as its main feature the consumption of the user's current location and display of an interface with the region's climate data. The app also has the feature of searching climate data from a city entered by the user.
 
-Gif do uso
+
+<p align="center">
+  <img src="screenshots/sample_video.gif" alt="gif" height="500"/>
+</p>
 
 ## Table of content
 - [Installation](#installation)
@@ -32,6 +35,7 @@ In another terminal
 Escrever aqui
 ## Screenshots
 <p align="center">
+  <img src="screenshots/example5.png" alt="splashscreen" height="500"/>
   <img src="screenshots/example1.png" alt="ios screen 1" height="500"/>
   <img src="screenshots/example2.png" alt="ios screen 2" height="500"/>
   <img src="screenshots/example3.png" alt="ios screen 3" height="500"/>

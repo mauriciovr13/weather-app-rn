@@ -3,9 +3,9 @@ import styled from 'styled-components/native';
 
 import colors from '../config/colors';
 
-export default function Info({info, weather}) {
+export default function Info({ info, weather }) {
   const getLine = data => (
-    <Container weather={weather}>
+    <Container weather={weather} key={`${data[0]?.label}`}>
       <Content>
         <Column>
           <Title weather={weather}>{data[0]?.label}</Title>
@@ -38,7 +38,7 @@ export default function Info({info, weather}) {
 
 const Container = styled.View`
   border-top-width: 1px;
-  border-color: ${({weather}) => colors[weather].tertiaryText};
+  border-color: ${({ weather }) => colors[weather].tertiaryText};
   margin-bottom: 5px;
   padding-top: 2px;
 `;
@@ -58,11 +58,11 @@ const Column = styled.View`
 `;
 
 const Title = styled.Text`
-  color: ${({weather}) => colors[weather].primaryText};
+  color: ${({ weather }) => colors[weather].primaryText};
   font-size: 12px;
 `;
 
 const Value = styled.Text`
-  color: ${({weather}) => colors[weather].tertiaryText};
+  color: ${({ weather }) => colors[weather].tertiaryText};
   font-size: 14px;
 `;

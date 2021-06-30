@@ -1,15 +1,15 @@
-import React, {useMemo} from 'react';
-import {TouchableOpacity} from 'react-native';
+import React, { useMemo } from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import {fromUnixTime, format} from 'date-fns';
+import { fromUnixTime, format } from 'date-fns';
 
 import theme from '../config/colors';
-import {weatherConditions} from '../utils/conditions';
+import { weatherConditions } from '../utils/conditions';
 
-import {WeatherDetails} from '.';
+import { WeatherDetails } from '.';
 
-export default function WeatherCard({data, onPressItem}) {
+export default function WeatherCard({ data, onPressItem }) {
   const weather = useMemo(() => {
     const weatherId = data.weather[0].id;
     return weatherConditions(weatherId);
@@ -17,12 +17,10 @@ export default function WeatherCard({data, onPressItem}) {
 
   const weatherDetails = useMemo(
     () => [
-      {label: 'UMIDADE', value: `${data.main.humidity}%`},
-      {label: 'SENSAÇÃO', value: `${data.main.feels_like}ºC`},
-      // {label: 'CHUVA', value: data.main.humidity},
-      // {label: 'PRECIPITACAO', value: data.main.feels_like},
-      {label: 'MIN', value: `${data.main.temp_min}ºC`},
-      {label: 'MAX', value: `${data.main.temp_max}ºC`},
+      { label: 'UMIDADE', value: `${data.main.humidity}%` },
+      { label: 'SENSAÇÃO', value: `${data.main.feels_like}ºC` },
+      { label: 'MIN', value: `${data.main.temp_min}ºC` },
+      { label: 'MAX', value: `${data.main.temp_max}ºC` },
       {
         label: 'NASCER DO SOL',
         value: format(fromUnixTime(data.sys.sunrise), 'kk:mm'),
@@ -31,8 +29,8 @@ export default function WeatherCard({data, onPressItem}) {
         label: 'PÔR DO SOL',
         value: format(fromUnixTime(data.sys.sunset), 'kk:mm'),
       },
-      {label: 'NEBULOSIDADE', value: `${data.clouds.all}%`},
-      {label: 'VENTO', value: `${data.wind.speed} m/s`},
+      { label: 'NEBULOSIDADE', value: `${data.clouds.all}%` },
+      { label: 'VENTO', value: `${data.wind.speed} m/s` },
     ],
     [data],
   );
@@ -65,7 +63,7 @@ export default function WeatherCard({data, onPressItem}) {
           <WeatherDetails info={weatherDetails} weather={weather} />
         )}
         <TextFooter>
-          Lat: {data.coord.lon} / Lon: {data.coord.lat} -
+          lat: {data.coord.lon} / lon: {data.coord.lat} {'\n'}
           {format(fromUnixTime(data.dt), 'dd/MM/yyyy HH:mm')}
         </TextFooter>
       </Container>
@@ -73,12 +71,14 @@ export default function WeatherCard({data, onPressItem}) {
   );
 }
 
-const Container = styled(LinearGradient).attrs(({weather}) => {
+const Container = styled(LinearGradient).attrs(({ weather }) => {
   return {
-    colors: [theme[weather].primary, theme[weather].secondary],
+    colors: [theme[weather].secondary, theme[weather].primary],
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 1 },
   };
 })`
-  margin: 10px 20px;
+  margin: 10px;
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.1);
@@ -92,13 +92,13 @@ const Header = styled.View`
 
 const City = styled.Text`
   font-size: 16px;
-  color: ${({weather}) => theme[weather].secondaryText};
+  color: ${({ weather }) => theme[weather].secondaryText};
   text-align: center;
   margin-top: 5px;
 `;
 const Description = styled.Text`
   font-size: 20px;
-  color: ${({weather}) => theme[weather].secondaryText};
+  color: ${({ weather }) => theme[weather].secondaryText};
   text-align: center;
   margin-bottom: 5px;
   text-transform: capitalize;
@@ -110,7 +110,7 @@ const Unit = styled.Text`
 
 const Temperature = styled.Text`
   font-size: 32px;
-  color: ${({weather}) => theme[weather].primaryText};
+  color: ${({ weather }) => theme[weather].primaryText};
   text-align: center;
 `;
 

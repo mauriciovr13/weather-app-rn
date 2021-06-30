@@ -1,149 +1,195 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {View, Platform, PermissionsAndroid, SectionList} from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import {
+  Platform,
+  PermissionsAndroid,
+  SafeAreaView,
+  SectionList,
+  Alert,
+} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import styled from 'styled-components/native';
 
-import {WeatherCard, Header} from '../../components';
+import { WeatherCard, Header, CitySearch } from '../../components';
 
 import api from '../../services/api';
-import {API_KEY} from '../../config/constants';
-import {getData, storeData} from '../../utils/storage';
+import { API_KEY } from '../../config/constants';
 
-export function HomeScreen() {
+export const HomeScreen = () => {
   const [weatherData, setWeatherData] = useState([]);
+  const [citySearched, setCitySearched] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const getWeatherInfoByCity = city => {
+  const listRef = useRef();
+
+  const showAlertByType = type =>
+    type === 'permission'
+      ? Alert.alert(
+        'Error',
+        'There was an error with the location permission. Restart the app to request again',
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+      )
+      : Alert.alert(
+        'Something went wrong',
+        "Something wrong is not right, check your internet connection and try the request again. If that doesn't work, restart the app.",
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+      );
+
+  const getWeatherInfoByCity = () => {
+    setLoading(true);
     api
-      .get(`weather?units=metric&lang=pt_br&q=${city}&appid=${API_KEY}`)
-      .then(({data}) => {
-        setWeatherData([...weatherData, {...data, expanded: true}]);
+      .get(`weather?units=metric&lang=pt_br&q=${citySearched}&appid=${API_KEY}`)
+      .then(({ data }) => {
+        setWeatherData([
+          ...weatherData,
+          { ...data, uuid: weatherData.length, expanded: false },
+        ]);
+        setCitySearched('');
       })
-      .catch(err => console.log('err', err));
+      .catch(() => showAlertByType('request'))
+      .finally(() => setLoading(false));
   };
 
   const getWeatherInfoByGeoCoordinates = async () => {
+    setLoading(true);
     Geolocation.getCurrentPosition(
       info =>
         api
           .get(
             `weather?units=metric&lang=pt_br&lat=${info.coords.latitude}&lon=${info.coords.latitude}&appid=${API_KEY}`,
           )
-          .then(({data}) => {
-            setWeatherData([...weatherData, {...data, expanded: true}]);
+          .then(({ data }) => {
+            setWeatherData([
+              ...weatherData,
+              { ...data, uuid: weatherData.length, expanded: false },
+            ]);
           })
-          .catch(err => console.log('err', err)),
-      err => console.log('err', err),
+          .catch(() => showAlertByType('request'))
+          .finally(() => setLoading(false)),
+      () => showAlertByType('request'),
     );
-    getWeatherInfoByCity('Londres');
   };
 
-  const onExpandItem = i => {
+  const onExpandItem = uuid => {
+    const i = weatherData.findIndex(item => item.uuid === uuid);
+    const lastIndex = weatherData.length - 1;
     setWeatherData(
       weatherData.map((item, index) =>
-        index === i
-          ? {...item, expanded: !item.expanded}
-          : {...item, expanded: false},
+        index === i && lastIndex !== i
+          ? { ...item, expanded: !item.expanded }
+          : { ...item, expanded: false },
       ),
     );
   };
 
+  const requestAndroidPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Permissão de Acesso à Localização',
+          message: 'Este aplicativo precisa acessar sua localização.',
+          buttonNeutral: 'Pergunte-me depois',
+          buttonNegative: 'Cancelar',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        getWeatherInfoByGeoCoordinates();
+      } else {
+        showAlertByType('permission');
+      }
+    } catch (err) {
+      showAlertByType('permission');
+    }
+  };
+
   const requestPermission = () => {
     if (Platform.OS === 'android') {
-      console.log('teste');
-      const requestLocationPermission = async () => {
-        const granted = await PermissionsAndroid.RESULTS;
-        console.log(granted);
-        // const callLocation = () => {
-        //   if(Platform.OS === 'ios') {
-        //     getLocation();
-        //   } else {
-        //     const requestLocationPermission = async () => {
-        //       const granted = await PermissionsAndroid.request(
-        //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        //         {
-        //           title: "Permissão de Acesso à Localização",
-        //           message: "Este aplicativo precisa acessar sua localização.",
-        //           buttonNeutral: "Pergunte-me depois",
-        //           buttonNegative: "Cancelar",
-        //           buttonPositive: "OK"
-        //         }
-        //       );
-        //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        //         getLocation();
-        //       } else {
-        //         alert('Permissão de Localização negada');
-        //       }
-        //     };
-        //     requestLocationPermission();
-        //   }
-        // }
-      };
-      requestLocationPermission();
+      requestAndroidPermission();
     } else {
       Geolocation.requestAuthorization();
     }
-    Geolocation.getCurrentPosition(
-      info => getWeatherInfoByGeoCoordinates(info),
-      err => console.log('err', err),
-    );
   };
 
-  const loadData = async () => {
-    const data = await getData();
-    setWeatherData(data);
-    requestPermission();
-    getWeatherInfoByCity('Ferros');
-  };
+  console.log(weatherData);
 
   const sectionData = useMemo(
     () => [
       {
         title: 'Current location',
-        data: weatherData[weatherData.length - 1]
-          ? [weatherData[weatherData.length - 1]]
-          : [],
+        data:
+          weatherData?.length > 0
+            ? [{ ...weatherData[weatherData.length - 1], expanded: true }]
+            : [],
       },
       {
         title: 'History',
-        data: weatherData.slice(0, weatherData.length - 2) || [],
+        data: weatherData?.slice(0, weatherData.length - 1).reverse() || [],
       },
     ],
     [weatherData],
   );
 
   useEffect(() => {
-    storeData(weatherData.map(item => ({...item, expanded: false})));
+    if (weatherData.length === 0) {
+      getWeatherInfoByGeoCoordinates();
+    }
   }, [weatherData]);
 
   useEffect(() => {
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    requestPermission();
   }, []);
 
   return (
-    <View>
-      <Header onLeftPress={() => {}} />
+    <Container>
+      <Header
+        onRightPress={() => setVisible(true)}
+        onLeftPress={() => setWeatherData([])}
+      />
       <SectionList
         sections={sectionData}
+        ref={listRef}
         keyExtractor={(item, index) => index}
-        renderSectionHeader={({section: {title}}) => (
+        renderSectionHeader={({ section: { title } }) => (
           <SectionTitle>{title}</SectionTitle>
         )}
-        renderItem={({item, index}) => (
-          <WeatherCard data={item} onPressItem={() => onExpandItem(index)} />
+        refreshing={loading}
+        onRefresh={() => getWeatherInfoByGeoCoordinates()}
+        renderItem={({ item, index }) => (
+          <WeatherCard
+            data={item}
+            onPressItem={() => onExpandItem(item.uuid)}
+          />
         )}
       />
-    </View>
+      <CitySearch
+        visible={visible}
+        value={citySearched}
+        onChange={setCitySearched}
+        onSearch={() => {
+          if (citySearched.length > 0) {
+            getWeatherInfoByCity();
+          }
+          setVisible(false);
+        }}
+        onCancel={() => setVisible(false)}
+      />
+      <SafeAreaView />
+    </Container>
   );
-}
+};
 
-const SectionTitle = styled.Text``;
+const Container = styled.View`
+  flex: 1;
+  background-color: #ebedee;
+`;
 
-// Features:
-// detalhes da previsao OK
-// ultimos resultados ok
-// buscar por cidades
-// estilizar o header
-// estilizar o section header
-// pull to refresh
-// limpar todos os resultados ok
+const SectionTitle = styled.Text`
+  background-color: white;
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  border-width: 0.5px;
+`;

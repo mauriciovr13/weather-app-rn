@@ -1,19 +1,19 @@
 import React from 'react';
-import {SafeAreaView, View} from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import styled from 'styled-components/native';
 
-import {clear} from '../utils/storage';
-
-export default function Header() {
+export default function Header({ onRightPress, onLeftPress }) {
   return (
     <View>
       <SafeAreaView />
       <Container>
-        <Button onPress={() => clear()}>
-          <Text textAlign="left">Clear</Text>
+        <Button onPress={onLeftPress}>
+          <Text textAlign="left" color="red">
+            Clear
+          </Text>
         </Button>
-        <Text textAlign="center">Weather</Text>
-        <Button>
+        <Text textAlign="center">WEATHER</Text>
+        <Button onPress={onRightPress}>
           <Text textAlign="right">Search By City</Text>
         </Button>
       </Container>
@@ -35,5 +35,7 @@ const Button = styled.TouchableOpacity`
 `;
 
 const Text = styled.Text`
-  text-align: ${({textAlign}) => textAlign};
+  text-align: ${({ textAlign }) => textAlign};
+  font-size: 16px;
+  color: ${({ color }) => color || 'black'};
 `;

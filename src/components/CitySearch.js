@@ -16,7 +16,7 @@ const CitySearch = ({ visible, value, onChange, onSearch, onCancel }) => (
           To update the weather forecast of the current location, just swipe
           down from the main screen.
         </Title>
-        <TextInput value={value} onChangeText={onChange} />
+        <TextInput value={value} onChangeText={onChange} placeholder='city name' />
         <ButtonsContainer>
           <Button onPress={onCancel}>
             <Text>cancel</Text>
